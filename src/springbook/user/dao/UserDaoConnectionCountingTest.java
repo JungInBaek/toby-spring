@@ -6,19 +6,11 @@ import springbook.user.domain.User;
 
 import java.sql.SQLException;
 
-public class UserDaoTest {
+public class UserDaoConnectionCountingTest {
 
-    //  테스트
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
-//        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-//        UserDao dao1 = context.getBean("userDao", UserDao.class);
-//        UserDao dao2 = context.getBean("userDao", UserDao.class);
-//
-//        System.out.println(dao1);
-//        System.out.println(dao2);
-
-        ApplicationContext context = new AnnotationConfigApplicationContext(DaoFactory.class);
-
+        AnnotationConfigApplicationContext context =
+                new AnnotationConfigApplicationContext(CountingDaoFactory.class);
         UserDao dao = context.getBean("userDao", UserDao.class);
 
         User user = new User();
@@ -35,5 +27,9 @@ public class UserDaoTest {
         System.out.println(user2.getPassword());
 
         System.out.println(user2.getId() + " 조회 성공");
+
+        CountingConnectionMaker ccm =
+                context.getBean("connectionMaker", CountingConnectionMaker.class);
+        System.out.println(ccm.getCounter());
     }
 }

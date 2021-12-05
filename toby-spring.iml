@@ -16,5 +16,12 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="com.springsource.net.sf.cglib-2.2.0" level="project" />
+    <orderEntry type="library" name="com.springsource.org.apache.commons.logging-1.1.1" level="project" />
+    <orderEntry type="library" name="org.springframework.asm-3.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="org.springframework.beans-3.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="org.springframework.context-3.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="org.springframework.core-3.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="org.springframework.expression-3.0.7.RELEASE" level="project" />
   </component>
 </module>

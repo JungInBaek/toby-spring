@@ -10,7 +10,12 @@ public class UserDao {
     private ConnectionMaker connectionMaker;
 
     //  생성자
-    public UserDao(ConnectionMaker connectionMaker) {
+//    public UserDao(ConnectionMaker connectionMaker) {
+//        this.connectionMaker = connectionMaker;
+//    }
+
+    //  Setter
+    public void setConnectionMaker(ConnectionMaker connectionMaker) {
         this.connectionMaker = connectionMaker;
     }
 

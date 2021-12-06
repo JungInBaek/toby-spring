@@ -23,5 +23,6 @@
     <orderEntry type="library" name="org.springframework.context-3.0.7.RELEASE" level="project" />
     <orderEntry type="library" name="org.springframework.core-3.0.7.RELEASE" level="project" />
     <orderEntry type="library" name="org.springframework.expression-3.0.7.RELEASE" level="project" />
+    <orderEntry type="library" name="org.springframework.jdbc-3.0.7.RELEASE" level="project" />
   </component>
 </module>

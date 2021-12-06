@@ -2,12 +2,13 @@ package springbook.user.dao;
 
 import springbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 public class UserDao {
 
     //  필드
-    private ConnectionMaker connectionMaker;
+    private DataSource dataSource;
 
     //  생성자
 //    public UserDao(ConnectionMaker connectionMaker) {
@@ -15,13 +16,13 @@ public class UserDao {
 //    }
 
     //  Setter
-    public void setConnectionMaker(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     //  추가
-    public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+    public void add(User user) throws SQLException {
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
         ps.setString(1, user.getId());
@@ -35,8 +36,8 @@ public class UserDao {
     }
 
     //  조회
-    public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeConnection();
+    public User get(String id) throws SQLException {
+        Connection c = dataSource.getConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);

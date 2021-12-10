@@ -2,10 +2,23 @@ package springbook.user.domain;
 
 public class User {
 
+    //  필드
     String id;
     String name;
     String password;
 
+
+    //  생성자
+    public User(String id, String name, String password) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+    }
+
+    public User() {};
+
+
+    //  getter, setter
     public String getId() {
         return id;
     }

@@ -3,6 +3,8 @@ package springbook.user.dao;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.GenericXmlApplicationContext;
+import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
 import java.sql.SQLException;
@@ -17,43 +19,58 @@ public class UserDaoTest {
         ApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml");
         UserDao dao = context.getBean("userDao", UserDao.class);
 
-        User user = new User();
-        user.setId("gyumee");
-        user.setName("박성철");
-        user.setPassword("springno1");
+        User user1 = new User("gyumee", "박성철", "springno1");
+        User user2 = new User("leegw700", "이길원", "springno2");
+
+        //  삭제
+        dao.deleteAll();
+        assertThat(dao.getCount(), is(0));
 
         //  등록
-        dao.add(user);
+        dao.add(user1);
+        dao.add(user2);
+        assertThat(dao.getCount(), is(2));
 
         //  조회
-        User user2 = dao.get(user.getId());
+        User userget1 = dao.get(user1.getId());
+        assertThat(userget1.getName(), is(user1.getName()));
+        assertThat(userget1.getPassword(), is(user1.getPassword()));
 
-        assertThat(user2.getName(), is(user.getName()));
-        assertThat(user2.getPassword(), is(user.getPassword()));
+        User userget2 = dao.get(user2.getId());
+        assertThat(userget2.getName(), is(user2.getName()));
+        assertThat(userget2.getPassword(), is(user2.getPassword()));
     }
 
-    //  테스트
-//    public static void main(String[] args) throws SQLException {
-//        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
-//        UserDao dao = context.getBean("userDao", UserDao.class);
-//
-//        User user = new User();
-//        user.setId("whiteship");
-//        user.setName("백기선");
-//        user.setPassword("married");
-//
-//        //  등록
-//        dao.add(user);
-//        System.out.println(user.getId() + " 등록 성공");
-//
-//        //  조회
-//        User user2 = dao.get(user.getId());
-//        if(!user.getName().equals(user2.getName())) {
-//            System.out.println("테스트 실패 (name)");
-//        } else if(!user.getPassword().equals(user2.getPassword())) {
-//            System.out.println("테스트 실패 (password)");
-//        } else {
-//            System.out.println("조회 테스트 성공");
-//        }
-//    }
+    @Test
+    public void count() throws SQLException {
+        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+        UserDao dao = context.getBean("userDao", UserDao.class);
+
+        User user1 = new User("gyumee", "박성철", "springno1");
+        User user2 = new User("leegw700", "이길원", "springno2");
+        User user3 = new User("bumjin", "박범진", "springno3");
+
+        dao.deleteAll();
+        assertThat(dao.getCount(), is(0));
+
+        dao.add(user1);
+        assertThat(dao.getCount(), is(1));
+
+        dao.add(user2);
+        assertThat(dao.getCount(), is(2));
+
+        dao.add(user3);
+        assertThat(dao.getCount(), is(3));
+    }
+
+    @Test(expected = EmptyResultDataAccessException.class)
+    public void getUserFailure() throws SQLException {
+        ApplicationContext context = new GenericXmlApplicationContext("applicationContext.xml");
+        UserDao dao = context.getBean("userDao", UserDao.class);
+
+        dao.deleteAll();
+        assertThat(dao.getCount(), is(0));
+
+        dao.get("unknown_id");
+    }
 }

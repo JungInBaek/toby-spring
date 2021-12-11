@@ -11,14 +11,14 @@ public class UserDao {
     //  필드
     private DataSource dataSource;
 
-    //  생성자
-//    public UserDao(ConnectionMaker connectionMaker) {
-//        this.connectionMaker = connectionMaker;
-//    }
-
     //  Setter
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
+    }
+
+    //  getter
+    public DataSource getDataSource() {
+        return this.dataSource;
     }
 
     //  추가

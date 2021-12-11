@@ -2,35 +2,34 @@ package springbook.user.dao;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import springbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "/test-applicationContext.xml")
-public class UserDaoTest {
-
-    @Autowired
-    private UserDao dao;
-
-    private User user1;
-    private User user2;
-    private User user3;
+//  컨테이너에 종속적이지 않은 테스트
+public class UserDaoTest2 {
+    UserDao dao;
+    User user1;
+    User user2;
+    User user3;
 
     @Before
     public void setUp() {
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
         user3 = new User("bumjin", "박범진", "springno3");
+
+        DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:tcp://localhost/~/testdb", "spring", "book", true);
+
+        dao = new UserDao();
+        dao.setDataSource(dataSource);
     }
 
     @Test

@@ -8,48 +8,31 @@ import java.sql.*;
 
 public class UserDao {
 
-    //  필드
     private DataSource dataSource;
 
-    //  Setter
+    private JdbcContext jdbcContext;
+
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
-    }
 
-    //  getter
-    public DataSource getDataSource() {
-        return this.dataSource;
+        this.jdbcContext = new JdbcContext();
+        this.jdbcContext.setDataSource(dataSource);
     }
 
     //  추가
-    public void add(User user) throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
+    public void add(final User user) throws SQLException {
+        jdbcContext.workWithStatementStrategy(
+                new StatementStrategy() {
+                    public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                        PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
+                        ps.setString(1, user.getId());
+                        ps.setString(2, user.getName());
+                        ps.setString(3, user.getPassword());
 
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("insert into users(id, name, password) values(?, ?, ?)");
-
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
-            ps.executeUpdate();
-        } catch(SQLException e) {
-            throw e;
-        } finally {
-            if(ps != null) {
-                try {
-                    ps.close();
-                } catch(SQLException e) {
+                        return ps;
+                    }
                 }
-            }
-            if(c != null) {
-                try {
-                    c.close();
-                } catch(SQLException e) {
-                }
-            }
-        }
+        );
     }
 
     //  조회
@@ -102,29 +85,15 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        Connection c = null;
-        PreparedStatement ps = null;
+        jdbcContext.workWithStatementStrategy(
+                new StatementStrategy() {
+                    public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                        PreparedStatement ps = c.prepareStatement("delete from users");
 
-        try {
-            c = dataSource.getConnection();
-            ps = c.prepareStatement("delete from users");
-            ps.executeUpdate();
-        } catch(SQLException e) {
-            throw e;
-        } finally {
-            if(ps != null) {
-                try {
-                    ps.close();
-                } catch(SQLException e) {
+                        return ps;
+                    }
                 }
-            }
-            if(c != null) {
-                try {
-                    c.close();
-                } catch(SQLException e) {
-                }
-            }
-        }
+        );
     }
 
     public int getCount() throws SQLException {

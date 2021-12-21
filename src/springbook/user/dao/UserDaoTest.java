@@ -109,4 +109,13 @@ public class UserDaoTest {
         assertThat(user1.getName(), is(user2.getName()));
         assertThat(user1.getPassword(), is(user2.getPassword()));
     }
+
+    @Test(expected = DuplicateUserIdException.class)
+    public void addDuplicateUserIdExceptionTest() {
+        dao.deleteAll();
+
+        dao.add(user1);
+        User user = new User("gyumee", "테스트", "test");
+        dao.add(user);
+    }
 }

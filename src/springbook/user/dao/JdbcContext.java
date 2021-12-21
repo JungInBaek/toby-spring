@@ -37,7 +37,7 @@ public class JdbcContext {
         }
     }
 
-    public void executeSql(String query) throws SQLException {
+    public void executeSql(final String query) throws SQLException {
         workWithStatementStrategy(
                 new StatementStrategy() {
                     public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
@@ -47,7 +47,7 @@ public class JdbcContext {
         );
     }
 
-    public void preparedSql(String query, String...str) throws SQLException {
+    public void executeSql(final String query, String...str) throws SQLException {
         workWithStatementStrategy(
                 new StatementStrategy() {
                     public PreparedStatement makePreparedStatement(Connection c) throws SQLException {

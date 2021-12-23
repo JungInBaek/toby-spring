@@ -2,6 +2,7 @@ package springbook.user.dao;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import springbook.user.domain.User;
@@ -16,7 +17,7 @@ import static org.junit.Assert.assertThat;
 
 //  컨테이너에 종속적이지 않은 테스트
 public class UserDaoTest2 {
-    UserDao dao;
+    UserDaoJdbc dao;
     User user1;
     User user2;
     User user3;
@@ -29,7 +30,7 @@ public class UserDaoTest2 {
 
         DataSource dataSource = new SingleConnectionDataSource("jdbc:h2:tcp://localhost/~/testdb", "spring", "book", true);
 
-        dao = new UserDao();
+        dao = new UserDaoJdbc();
         dao.setDataSource(dataSource);
     }
 
@@ -109,7 +110,7 @@ public class UserDaoTest2 {
         assertThat(user1.getPassword(), is(user2.getPassword()));
     }
 
-    @Test(expected = DuplicateUserIdException.class)
+    @Test(expected = DuplicateKeyException.class)
     public void addDuplicateUserIdExceptionTest() {
         dao.deleteAll();
 

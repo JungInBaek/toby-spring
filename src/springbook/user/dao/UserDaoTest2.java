@@ -20,6 +20,7 @@ import static org.junit.Assert.assertThat;
 
 //  컨테이너에 종속적이지 않은 테스트
 public class UserDaoTest2 {
+
     DataSource dataSource;
     UserDao dao;
     User user1;

@@ -1,4 +1,4 @@
-package springbook.user.dao;
+package springbook.user.service;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
@@ -47,6 +48,7 @@ public class UserServiceTest {
 
     @Test
     public void upgradeLevels() {
+
         userDao.deleteAll();
         for(User user : users) {
             userDao.add(user);

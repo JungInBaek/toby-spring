@@ -15,8 +15,10 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+//import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
+//import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
+import static springbook.user.service.UserLevelUpgradePolicyNomal.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserLevelUpgradePolicyNomal.MIN_RECOMMEND_FOR_GOLD;
 
 
 //  컨테이너에 종속적이지 않은 테스트
@@ -42,6 +44,7 @@ public class UserServiceTest2 {
         userDao = new UserDaoJdbc(dataSource);
         userService = new UserService();
         userService.setUserDao(userDao);
+//        userService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyNomal());
     }
 
     @Test

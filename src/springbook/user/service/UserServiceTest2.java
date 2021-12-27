@@ -2,7 +2,9 @@ package springbook.user.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.transaction.PlatformTransactionManager;
 import springbook.user.dao.UserDao;
 import springbook.user.dao.UserDaoJdbc;
 import springbook.user.domain.Level;
@@ -15,10 +17,9 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
-//import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
-//import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
-import static springbook.user.service.UserLevelUpgradePolicyNomal.MIN_LOGCOUNT_FOR_SILVER;
-import static springbook.user.service.UserLevelUpgradePolicyNomal.MIN_RECOMMEND_FOR_GOLD;
+import static org.junit.Assert.fail;
+import static springbook.user.service.UserService.MIN_LOGCOUNT_FOR_SILVER;
+import static springbook.user.service.UserService.MIN_RECOMMEND_FOR_GOLD;
 
 
 //  컨테이너에 종속적이지 않은 테스트
@@ -27,6 +28,7 @@ public class UserServiceTest2 {
     DataSource dataSource;
     UserDao userDao;
     UserService userService;
+    PlatformTransactionManager transactionManager;
 
     List<User> users;
 
@@ -41,10 +43,11 @@ public class UserServiceTest2 {
         );
 
         dataSource = new SingleConnectionDataSource("jdbc:h2:tcp://localhost/~/testdb", "spring", "book", true);
+        transactionManager = new DataSourceTransactionManager(dataSource);
         userDao = new UserDaoJdbc(dataSource);
         userService = new UserService();
         userService.setUserDao(userDao);
-//        userService.setUserLevelUpgradePolicy(new UserLevelUpgradePolicyNomal());
+        userService.setTransactionManager(new DataSourceTransactionManager(dataSource));
     }
 
     @Test
@@ -99,5 +102,44 @@ public class UserServiceTest2 {
 
         assertThat(userWithLevelRead.getLevel(), is(userWithLevel.getLevel()));
         assertThat(userWithoutLevelRead.getLevel(), is(Level.BASIC));
+    }
+
+    @Test
+    public void upgradeAllOrNothing() {
+        UserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+        testUserService.setTransactionManager(transactionManager);
+
+        userDao.deleteAll();
+        for(User user : users) {
+            userDao.add(user);
+        }
+
+        try {
+            testUserService.upgradeLevels();
+            fail("TestUserServiceException expected");
+        } catch(TestUserServiceException e) {
+
+        }
+
+        checkLevelUpgraded(users.get(1), false);
+    }
+
+    static class TestUserService extends UserService {
+        private String id;
+
+        private TestUserService(String id) {
+            this.id = id;
+        }
+
+        protected void upgradeLevel(User user) {
+            if(user.getId().equals(this.id)) {
+                throw new TestUserServiceException();
+            }
+            super.upgradeLevel(user);
+        }
+    }
+
+    static class TestUserServiceException extends RuntimeException {
     }
 }

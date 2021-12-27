@@ -6,7 +6,8 @@ import springbook.user.domain.Level;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class UserDaoJdbc implements UserDao {
@@ -50,12 +51,7 @@ public class UserDaoJdbc implements UserDao {
     //  추가
     public void add(final User user) throws DuplicateUserIdException {
 //        jdbcContext.executeSql("insert into users(id, name, password) values(?, ?, ?)", user.getId(), user.getName(), user.getPassword());
-//        try {
-//            jdbcTemplate.update("insert into users(id, name, password) values(?, ?, ?)", user.getId(), user.getName(), user.getPassword());
-//        } catch(DuplicateKeyException e) {
-//            e.printStackTrace();
-//            throw new DuplicateUserIdException(e);
-//        }
+
         jdbcTemplate.update("insert into users(id, name, password, level, login, recommend) values(?, ?, ?, ?, ?, ?)",
                 user.getId(), user.getName(), user.getPassword(), user.getLevel().intValue(), user.getLogin(), user.getRecommend());
     }

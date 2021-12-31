@@ -105,10 +105,13 @@ public class UserServiceTest {
 
     @Test
     public void upgradeAllOrNothing() {
-        UserService testUserService = new UserServiceTest.TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-        testUserService.setTransactionManager(this.transactionManager);
-        testUserService.setMailSender(this.mailSender);
+        TestUserService testUserService = new UserServiceTest.TestUserService(users.get(3).getId());
+        testUserService.setUserDao(userDao);
+        testUserService.setMailSender(mailSender);
+
+        UserServiceTx txUserService = new UserServiceTx();
+        txUserService.setTransactionManager(transactionManager);
+        txUserService.setUserService(testUserService);
 
         userDao.deleteAll();
         for(User user : users) {
@@ -116,7 +119,7 @@ public class UserServiceTest {
         }
 
         try {
-            testUserService.upgradeLevels();
+            txUserService.upgradeLevels();
             fail("TestUserServiceException expected");
         } catch(UserServiceTest2.TestUserServiceException e) {
 
@@ -125,7 +128,7 @@ public class UserServiceTest {
         checkLevelUpgraded(users.get(1), false);
     }
 
-    static class TestUserService extends UserService {
+    static class TestUserService extends UserServiceImpl {
         private String id;
 
         private TestUserService(String id) {

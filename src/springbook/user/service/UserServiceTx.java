@@ -8,7 +8,6 @@ import springbook.user.domain.User;
 public class UserServiceTx implements UserService {
 
     UserService userService;
-
     PlatformTransactionManager transactionManager;
 
     public void setTransactionManager(PlatformTransactionManager transactionManager) {

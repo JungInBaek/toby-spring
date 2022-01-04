@@ -5,7 +5,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
         <property name="driverClass" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:tcp://localhost/~/springbook" />
+        <property name="url" value="jdbc:h2:tcp://localhost/~/testdb" />
         <property name="username" value="spring" />
         <property name="password" value="book" />
     </bean>
@@ -14,22 +14,44 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <bean id="userService" class="springbook.user.service.UserServiceTx">
-        <property name="transactionManager" ref="transactionManager" />
-        <property name="userService" ref="userServiceImpl" />
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
     </bean>
+
+    <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 
     <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
         <property name="userDao" ref="userDao" />
         <property name="mailSender" ref="mailSender" />
     </bean>
 
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
+<!--    <bean id="userService" class="springbook.user.service.TxProxyFactoryBean">-->
+<!--        <property name="target" ref="userServiceImpl" />-->
+<!--        <property name="transactionManager" ref="transactionManager" />-->
+<!--        <property name="pattern" value="upgradeLevels" />-->
+<!--        <property name="serviceInterface" value="springbook.user.service.UserService" />-->
+<!--    </bean>-->
+
+    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">
+        <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
-        <property name="host" value="mail.server.com" />
+    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
+        <property name="mappedName" value="upgrade*" />
+    </bean>
+
+    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
+        <property name="advice" ref="transactionAdvice" />
+        <property name="pointcut" ref="transactionPointcut" />
+    </bean>
+
+    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="target" ref="userServiceImpl" />
+        <property name="interceptorNames">
+            <list>
+                <value>transactionAdvisor</value>
+            </list>
+        </property>
     </bean>
 
 </beans>

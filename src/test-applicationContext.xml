@@ -45,13 +45,13 @@
         <property name="pointcut" ref="transactionPointcut" />
     </bean>
 
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl" />
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
+    <bean id="userService" class="springbook.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao" />
+        <property name="mailSender" ref="mailSender" />
     </bean>
+
+    <bean id="testUserService"
+          class="springbook.user.service.UserServiceTest$TestUserServiceImpl"
+          parent="userService" />
 
 </beans>

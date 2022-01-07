@@ -149,17 +149,6 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.0.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.9.0.jar!/" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
           <root url="jar://$MODULE_DIR$/lib/spring-aop-3.0.7.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
@@ -179,6 +168,26 @@
       <library>
         <CLASSES>
           <root url="jar://C:/Program Files/h2/bin/h2-1.4.200.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.8.4.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/lib/mockito-all-1.8.4.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/com.springsource.org.aspectj.tools-1.6.6.RELEASE.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
@@ -20,11 +21,6 @@
 
     <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
 
-    <bean id="userServiceImpl" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao" />
-        <property name="mailSender" ref="mailSender" />
-    </bean>
-
 <!--    <bean id="userService" class="springbook.user.service.TxProxyFactoryBean">-->
 <!--        <property name="target" ref="userServiceImpl" />-->
 <!--        <property name="transactionManager" ref="transactionManager" />-->
@@ -32,26 +28,22 @@
 <!--        <property name="serviceInterface" value="springbook.user.service.UserService" />-->
 <!--    </bean>-->
 
+    <bean id="userService" class="springbook.user.service.UserServiceImpl">
+        <property name="userDao" ref="userDao" />
+        <property name="mailSender" ref="mailSender" />
+    </bean>
+
+    <bean id="testUserService"
+          class="springbook.user.service.UserServiceTest$TestUserServiceImpl"
+          parent="userService" />
+
     <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">
         <property name="transactionManager" ref="transactionManager" />
     </bean>
 
-    <bean id="transactionPointcut" class="org.springframework.aop.support.NameMatchMethodPointcut">
-        <property name="mappedName" value="upgrade*" />
-    </bean>
-
-    <bean id="transactionAdvisor" class="org.springframework.aop.support.DefaultPointcutAdvisor">
-        <property name="advice" ref="transactionAdvice" />
-        <property name="pointcut" ref="transactionPointcut" />
-    </bean>
-
-    <bean id="userService" class="org.springframework.aop.framework.ProxyFactoryBean">
-        <property name="target" ref="userServiceImpl" />
-        <property name="interceptorNames">
-            <list>
-                <value>transactionAdvisor</value>
-            </list>
-        </property>
-    </bean>
+    <aop:config>
+        <aop:advisor advice-ref="transactionAdvice"
+                     pointcut="execution(* *..*ServiceImpl.upgrade*(..))" />
+    </aop:config>
 
 </beans>

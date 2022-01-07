@@ -31,7 +31,7 @@ public class UserTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void connotUpgradeLevel() {
+    public void cannotUpgradeLevel() {
         Level[] levels = Level.values();
         for(Level level : levels) {
             if(level.nextLevel() != null) {

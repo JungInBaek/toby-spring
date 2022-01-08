@@ -2,48 +2,49 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/aop
+                           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.SimpleDriverDataSource">
-        <property name="driverClass" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:tcp://localhost/~/testdb" />
-        <property name="username" value="spring" />
-        <property name="password" value="book" />
+        <property name="driverClass" value="org.h2.Driver"/>
+        <property name="url" value="jdbc:h2:tcp://localhost/~/testdb"/>
+        <property name="username" value="spring"/>
+        <property name="password" value="book"/>
     </bean>
 
     <bean id="userDao" class="springbook.user.dao.UserDaoJdbc">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
     <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
+        <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="mailSender" class="springbook.user.service.DummyMailSender" />
-
-<!--    <bean id="userService" class="springbook.user.service.TxProxyFactoryBean">-->
-<!--        <property name="target" ref="userServiceImpl" />-->
-<!--        <property name="transactionManager" ref="transactionManager" />-->
-<!--        <property name="pattern" value="upgradeLevels" />-->
-<!--        <property name="serviceInterface" value="springbook.user.service.UserService" />-->
-<!--    </bean>-->
+    <bean id="mailSender" class="springbook.user.service.DummyMailSender"/>
 
     <bean id="userService" class="springbook.user.service.UserServiceImpl">
-        <property name="userDao" ref="userDao" />
-        <property name="mailSender" ref="mailSender" />
+        <property name="userDao" ref="userDao"/>
+        <property name="mailSender" ref="mailSender"/>
     </bean>
 
     <bean id="testUserService"
           class="springbook.user.service.UserServiceTest$TestUserServiceImpl"
-          parent="userService" />
+          parent="userService"/>
 
-    <bean id="transactionAdvice" class="springbook.user.service.TransactionAdvice">
-        <property name="transactionManager" ref="transactionManager" />
-    </bean>
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="get*" propagation="REQUIRED" read-only="true" />
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
 
     <aop:config>
-        <aop:advisor advice-ref="transactionAdvice"
-                     pointcut="execution(* *..*ServiceImpl.upgrade*(..))" />
+        <aop:advisor advice-ref="transactionAdvice" pointcut="bean(*Service)"/>
     </aop:config>
 
 </beans>

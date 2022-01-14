@@ -12,6 +12,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.Level;
 import springbook.user.domain.User;
@@ -150,6 +152,25 @@ public class UserServiceTest {
     @Test(expected = TransientDataAccessResourceException.class)
     public void readOnlyTransactionAttribute() {
         testUserService.getAll();
+    }
+
+    @Test
+    public void transactionSync() {
+        userDao.deleteAll();
+        assertThat(userDao.getCount(), is(0));
+
+        DefaultTransactionDefinition txDefinition = new DefaultTransactionDefinition();
+        txDefinition.setReadOnly(true);
+
+        TransactionStatus txStatus = transactionManager.getTransaction(txDefinition);
+
+        try {
+            userService.deleteAll();
+            userService.add(users.get(0));
+            userService.add(users.get(1));
+        } finally {
+            transactionManager.rollback(txStatus);
+        }
     }
 
     static class TestUserServiceImpl extends UserServiceImpl {

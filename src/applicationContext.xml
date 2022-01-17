@@ -29,9 +29,9 @@
         <property name="sqlService" ref="sqlService"/>
     </bean>
 
-    <bean id="sqlService" class="springbook.user.sqlservice.BaseSqlService">
-        <property name="sqlReader" ref="sqlReader" />
-        <property name="sqlRegistry" ref="sqlRegistry" />
+    <bean id="sqlService" class="springbook.user.sqlservice.OxmSqlService">
+        <property name="unmarshaller" ref="unmarshaller" />
+        <property name="sqlmap" value="classpath:springbook/user/dao/sqlmap.xml" />
     </bean>
 
     <bean id="sqlReader" class="springbook.user.sqlservice.JaxbXmlSqlReader">
